@@ -1,18 +1,50 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Regisztráció</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <div class="container mt-5" style="max-width: 500px;">
-        <h2>Regisztráció</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Regisztráció</button>
-            <a href="{% url 'login' %}" class="btn btn-secondary">Bejelentkezés</a>
-        </form>
+    <div class="auth-wrapper">
+        <div class="auth-box">
+            <h1 class="auth-title">Regisztráció</h1>
+            <p class="auth-subtitle">Hozz létre egy új fiókot pár másodperc alatt.</p>
+
+            {% if form.errors %}
+                <div class="error-box">
+                    Kérlek javítsd a hibákat, és próbáld újra.
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.username.id_for_label }}">Felhasználónév</label>
+                    {{ form.username }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.password1.id_for_label }}">Jelszó</label>
+                    {{ form.password1 }}
+                    <div class="form-help">Legalább 8 karaktert adj meg.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.password2.id_for_label }}">Jelszó megerősítése</label>
+                    {{ form.password2 }}
+                </div>
+
+                <div class="auth-actions">
+                    <button type="submit" class="btn btn-primary">Regisztráció</button>
+                    <a href="{% url 'login' %}" class="btn btn-secondary">Bejelentkezés</a>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 </html>

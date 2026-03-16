@@ -1,68 +1,68 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{{ post.title }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <div class="container mt-4">
-        <a href="{% url 'home' %}" class="btn btn-secondary mb-3">Vissza</a>
+    <div class="container py-4">
+        <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="page-title">{{ post.title }}</h1>
+                <p class="subtitle">{{ post.author.username }} • {{ post.created_at|timesince }} ezelőtt</p>
+            </div>
+
+            <div class="top-buttons">
+                <a href="{% url 'home' %}" class="btn btn-secondary">Vissza</a>
+            </div>
+        </div>
 
         <div class="card mb-4">
             <div class="card-body">
-                <h2>{{ post.title }}</h2>
-                <p>{{ post.content }}</p>
+                <p class="card-text">{{ post.content }}</p>
 
                 {% if post.image %}
-                    <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="Poszt kép">
+                    <img src="{{ post.image.url }}" class="post-image" alt="Poszt kép">
                 {% endif %}
 
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>
-                        <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
-                    </div>
-
-                    <div>
-                        {% if user.is_authenticated %}
-                        <form method="post" action="{% url 'like_post' post.id %}" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-primary">
-                                👍 Like ({{ post.likes.count }})
-                            </button>
-                        </form>
-                        {% else %}
-                        <span class="text-muted">Like-ok: {{ post.likes.count }}</span>
-                        {% endif %}
-                    </div>
-                </div>
+                <p class="post-meta mt-3">Likeok: {{ post.likes.count }} • Kommentek: {{ comments.count }}</p>
             </div>
         </div>
 
-        <h4>Kommentek</h4>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Kommentek</h4>
+
+                {% for comment in comments %}
+                    <div class="mb-3 pb-3 border-bottom">
+                        <p class="mb-1"><strong>{{ comment.author.username }}</strong></p>
+                        <p class="mb-1">{{ comment.content }}</p>
+                        <small class="text-muted">{{ comment.created_at|timesince }} ezelőtt</small>
+                    </div>
+                {% empty %}
+                    <p class="mb-0 text-muted">Még nincs komment.</p>
+                {% endfor %}
+            </div>
+        </div>
 
         {% if user.is_authenticated %}
-        <form method="post" action="{% url 'add_comment' post.id %}" class="mb-4">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Komment küldése</button>
-        </form>
-        {% else %}
-        <p>
-            Kommenteléshez előbb
-            <a href="{% url 'login' %}">lépj be</a>.
-        </p>
-        {% endif %}
-
-        {% for comment in comments %}
-        <div class="card mb-2">
+        <div class="card">
             <div class="card-body">
-                <p class="mb-1">{{ comment.content }}</p>
-                <small>{{ comment.author.username }} - {{ comment.created_at|timesince }} ezelőtt</small>
+                <h4 class="card-title">Új komment</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.content }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Komment küldése</button>
+                </form>
             </div>
         </div>
-        {% empty %}
-        <p>Még nincs komment.</p>
-        {% endfor %}
+        {% endif %}
     </div>
 </body>
 </html>

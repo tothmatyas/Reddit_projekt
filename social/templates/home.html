@@ -1,16 +1,24 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Reddit Klon</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Posztok</h1>
+    <div class="container py-4">
+        <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
+                <h1 class="page-title">Reddit Klon</h1>
+                <p class="subtitle">Posztok, kommentek, likeok és keresés egy helyen.</p>
+            </div>
+
+            <div class="top-buttons">
                 {% if user.is_authenticated %}
-                    <span class="me-2">Szia, {{ user.username }}!</span>
+                    <span class="btn btn-light">Szia, {{ user.username }}!</span>
                     <a href="{% url 'new_post' %}" class="btn btn-primary">Új poszt</a>
                     <a href="{% url 'my_posts' %}" class="btn btn-warning">Saját posztok</a>
                     <a href="{% url 'logout' %}" class="btn btn-danger">Kilépés</a>
@@ -24,51 +32,48 @@
         <form method="get" class="mb-4">
             <div class="input-group">
                 <input type="text" name="q" class="form-control" placeholder="Keresés cím alapján..." value="{{ query|default:'' }}">
-                <button class="btn btn-outline-secondary" type="submit">Keresés</button>
+                <button class="btn btn-secondary" type="submit">Keresés</button>
             </div>
         </form>
 
-        {% block content %}
-            {% for post in posts %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="{% url 'post_detail' post.id %}" class="text-decoration-none">
-                            {{ post.title }}
-                        </a>
-                    </h5>
+        {% for post in posts %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+                </h4>
 
-                    <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                <p class="card-text">{{ post.content|truncatewords:30 }}</p>
 
-                    {% if post.image %}
-                        <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="Poszt kép">
-                    {% endif %}
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="post-image" alt="Poszt kép">
+                {% endif %}
 
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <div>
-                            <p class="mb-1 text-muted">Kommentek: {{ post.comments.count }}</p>
-                            <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
-                        </div>
+                <div class="meta-row">
+                    <div>
+                        <p class="post-meta mb-1">Kommentek: {{ post.comments.count }}</p>
+                        <p class="post-meta mb-0">{{ post.author.username }} • {{ post.created_at|timesince }} ezelőtt</p>
+                    </div>
 
-                        <div>
-                            {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'like_post' post.id %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-primary">
-                                    👍 Like ({{ post.likes.count }})
-                                </button>
-                            </form>
-                            {% else %}
-                            <span class="text-muted">Like-ok: {{ post.likes.count }}</span>
-                            {% endif %}
-                        </div>
+                    <div>
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'like_post' post.id %}" class="like-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">👍 Like ({{ post.likes.count }})</button>
+                        </form>
+                        {% else %}
+                        <span class="post-meta">Likeok: {{ post.likes.count }}</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <p>Nincs poszt még!</p>
-            {% endfor %}
-        {% endblock %}
+        </div>
+        {% empty %}
+        <div class="empty-box">
+            <h4 class="mb-2">Még nincs egyetlen poszt sem</h4>
+            <p class="mb-0">Légy te az első, aki létrehoz egyet.</p>
+        </div>
+        {% endfor %}
     </div>
 </body>
 </html>

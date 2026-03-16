@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poszt törlése</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-box">
+            <h1 class="auth-title">Poszt törlése</h1>
+            <p class="auth-subtitle">Biztosan törölni szeretnéd ezt a posztot?</p>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4 class="card-title">{{ post.title }}</h4>
+                    <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="auth-actions">
+                    <button type="submit" class="btn btn-danger">Igen, törlöm</button>
+                    <a href="{% url 'my_posts' %}" class="btn btn-secondary">Mégse</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
