@@ -12,7 +12,7 @@ def home(request):
 @login_required
 def new_post(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -21,6 +21,8 @@ def new_post(request):
     else:
         form = PostForm()
     return render(request, 'new_post.html', {'form': form})
+
+
 
 def register(request):
     if request.method == 'POST':
@@ -50,3 +52,4 @@ def user_login(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+

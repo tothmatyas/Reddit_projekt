@@ -10,6 +10,8 @@ class Post(models.Model):
     
     def __str__(self):
         return self.title
+    image = models.ImageField(upload_to='posts/', blank=True, null=True)
+
 
 class Comment(models.Model):
     content = models.TextField(max_length=500)

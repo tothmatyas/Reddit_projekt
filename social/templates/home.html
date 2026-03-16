@@ -6,19 +6,38 @@
 </head>
 <body>
     <div class="container mt-4">
-        <h1>Posztok</h1>
-        <a href="{% url 'new_post' %}" class="btn btn-primary mb-3">Új poszt</a>
-        {% for post in posts %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">{{ post.title }}</h5>
-                <p class="card-text">{{ post.content|truncatewords:30 }}</p>
-                <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Posztok</h1>
+            <div>
+                {% if user.is_authenticated %}
+                    <span class="me-2">Szia, {{ user.username }}!</span>
+                    <a href="{% url 'new_post' %}" class="btn btn-primary">Új poszt</a>
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Kilépés</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-success">Belépés</a>
+                    <a href="{% url 'register' %}" class="btn btn-secondary">Regisztráció</a>
+                {% endif %}
             </div>
         </div>
-        {% empty %}
-        <p>Nincs poszt még!</p>
-        {% endfor %}
+
+        {% block content %}
+            {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="Poszt kép">
+                    {% endif %}
+
+                    <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
+                </div>
+            </div>
+            {% empty %}
+            <p>Nincs poszt még!</p>
+            {% endfor %}
+        {% endblock %}
     </div>
 </body>
 </html>
