@@ -36,8 +36,10 @@
                         <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="Poszt kép">
                     {% endif %}
 
+                    <p class="mt-2 mb-1 text-muted">Kommentek: {{ post.comments.count }}</p>
                     <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
                 </div>
+
             </div>
             {% empty %}
             <p>Nincs poszt még!</p>
