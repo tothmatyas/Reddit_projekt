@@ -7,8 +7,18 @@ from .forms import PostForm, CommentForm
 
 
 def home(request):
+    query = request.GET.get('q')
     posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'home.html', {'posts': posts})
+
+    if query:
+        posts = posts.filter(title__icontains=query)
+
+    return render(request, 'home.html', {
+        'posts': posts,
+        'query': query
+    })
+
+
 
 
 @login_required
@@ -94,3 +104,7 @@ def like_post(request, post_id):
 
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
+@login_required
+def my_posts(request):
+    posts = Post.objects.filter(author=request.user).order_by('-created_at')
+    return render(request, 'my_posts.html', {'posts': posts})
