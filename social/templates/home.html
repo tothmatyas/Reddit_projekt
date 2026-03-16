@@ -7,13 +7,13 @@
 <body>
     <div class="container mt-4">
         <h1>Posztok</h1>
-        <a href="#" class="btn btn-primary mb-3">Új poszt</a>
+        <a href="{% url 'new_post' %}" class="btn btn-primary mb-3">Új poszt</a>
         {% for post in posts %}
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{ post.title }}</h5>
                 <p class="card-text">{{ post.content|truncatewords:30 }}</p>
-                <small>{{ post.user.username }} - {{ post.created|timesince }} ezelőtt</small>
+                <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
             </div>
         </div>
         {% empty %}
