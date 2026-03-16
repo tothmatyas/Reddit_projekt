@@ -82,3 +82,15 @@ def add_comment(request, post_id):
             comment.save()
 
     return redirect('post_detail', post_id=post.id)
+
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+

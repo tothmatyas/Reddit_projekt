@@ -36,10 +36,26 @@
                         <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="Poszt kép">
                     {% endif %}
 
-                    <p class="mt-2 mb-1 text-muted">Kommentek: {{ post.comments.count }}</p>
-                    <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
-                </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div>
+                            <p class="mb-1 text-muted">Kommentek: {{ post.comments.count }}</p>
+                            <small>{{ post.author.username }} - {{ post.created_at|timesince }} ezelőtt</small>
+                        </div>
 
+                        <div>
+                            {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'like_post' post.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    👍 Like ({{ post.likes.count }})
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted">Like-ok: {{ post.likes.count }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
             {% empty %}
             <p>Nincs poszt még!</p>
